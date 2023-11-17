@@ -40,7 +40,7 @@ echo "----FINISHED CREATION OF ECR REPOSITORY"
 echo
 
 echo "----STARTING RETRIEVAL OF ECR REPOSITORY URI"
-ECR_REPO_URI=`aws ecr describe-repositories --repository-names "nodejs-sample" --query 'repositories[].repositoryUri | [0]'`
+ECR_REPO_URI=`aws ecr describe-repositories --repository-names $ECR_REPO_NAME --query 'repositories[].repositoryUri | [0]'`
 # Remove the double quotes
 ECR_REPO_URI=`sed -e 's/^"//' -e 's/"$//' <<<"$ECR_REPO_URI"`
 echo "Using ECR REPO URI: $ECR_REPO_URI"
@@ -52,6 +52,7 @@ echo
 
 echo "----STARTING DOCKER LOGIN"
 aws ecr --region $REGION | docker login -u AWS -p $ECR_TOKEN $ECR_REPO_URI
+echo "----FINISHED DOCKER LOGIN"
 echo
 
 echo "----STARTING DOCKER TAG"
