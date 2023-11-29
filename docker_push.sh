@@ -27,15 +27,21 @@ fi
 
 echo "----STARTING PARSING NAME_TAG FOR ECR REPO NAME"
 ECR_REPO_NAME="nodejs-sample"
+VERSION=""
+# Split the name and version
 IFS=':' read -ra REPO_NAME <<< "$NAME_TAG"
-for i in "${REPO_NAME[0]}"; do
-  ECR_REPO_NAME=$i
-  echo "Will use $ECR_REPO_NAME as the ECR Repo Name."
-  echo
-done
+ECR_REPO_NAME=${REPO_NAME[0]}
+VERSION=${REPO_NAME[1]}
+echo "Will use $ECR_REPO_NAME as the ECR Repo Name."
+# for i in "${REPO_NAME[0]}"; do
+#   ECR_REPO_NAME=$i
+#   VERSION=${REPO_NAME[1]}
+#   echo "Will use $ECR_REPO_NAME as the ECR Repo Name."
+#   echo
+# done
 
 echo "----STARTING CREATION OF ECR REPOSITORY"
-aws ecr create-repository --repository-name nodejs-sample --region $REGION
+aws ecr create-repository --repository-name $ECR_REPO_NAME --region $REGION
 echo "----FINISHED CREATION OF ECR REPOSITORY"
 echo
 
@@ -56,9 +62,9 @@ echo "----FINISHED DOCKER LOGIN"
 echo
 
 echo "----STARTING DOCKER TAG"
-docker tag $NAME_TAG $ECR_REPO_URI
+docker tag $NAME_TAG $ECR_REPO_URI:$VERSION
 echo
 
 echo "----STARTING DOCKER PUSH"
-docker push $ECR_REPO_URI
+docker push $ECR_REPO_URI:$VERSION
 echo "----FINISHED DOCKER PUSH"
